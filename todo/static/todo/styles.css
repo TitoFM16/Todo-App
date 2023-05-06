@@ -1,0 +1,45 @@
+h1 {
+  text-align: center;
+}
+
+a.button {
+  display: block;
+  margin: 0 auto;
+  width: 200px;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.card {
+  border-radius: 5px;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+.high-priority {
+  border-color: red;
+}
+
+.medium-priority {
+  border-color: yellow;
+}
+
+.low-priority {
+  border-color: green;
+}

@@ -1,0 +1,46 @@
+{% block content %}
+<!-- Button trigger modal -->
+
+  <!-- Modal -->
+  <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="TaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1>{% if task.id %}Edit{% else %}Create{% endif %} Task</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+  
+     
+          <form method="post" action="{% url 'todo:task_create_modal' %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="title">Title:</label>
+              <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+              <label for="description">Description:</label>
+              <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="due_date">Due Date:</label>
+              <input type="datetime-local" class="form-control" id="due_date" name="due_date" required>
+            </div>
+            <div class="form-group">
+              <label for="priority">Priority:</label>
+              <select class="form-control" id="priority" name="priority" required>
+                <option value="H">High</option>
+                <option value="M" selected>Medium</option>
+                <option value="L">Low</option>
+              </select>
+            </div>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" class="form-control">
+            <button type="submit" class="btn btn-primary">Save</button>
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
