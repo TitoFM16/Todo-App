@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.urls import reverse
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest,HttpResponse
 from .models import Task
 from .forms import TaskForm
 
@@ -27,25 +27,40 @@ def task_create(request):
         form = TaskForm()
     return render(request, 'todo/task_form.html', {'form': form})
 
+
+from django.http import JsonResponse
+
 # def task_create_modal(request):
-#     form = TaskForm(request.POST or None, instance=Task())
-#     context = {'form': form}
 #     if request.method == 'POST':
+#         form = TaskForm(request.POST)
 #         if form.is_valid():
-#             form.save()
-#             return redirect('todo:task_list')
-#     return render(request, 'todo/task_create_modal.html', context)
+#             task = form.save()
+#             # return JsonResponse({'id': task.id, 'title': task.title, 'description': task.description, 'due_date': task.due_date.strftime('%Y-%m-%d %H:%M:%S'), 'priority': task.get_priority_display()})
+#         return HttpResponse("")
+#     else:
+#         form = TaskForm()
+#     return render(request, 'todo/', {'form': form})
+
 def task_create_modal(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save()
-            return redirect('/')
-            # return redirect('/task/' + str(task.pk))
+            response_data = {
+                'id': task.id,
+                'title': task.title,
+                'description': task.description,
+                'due_date': task.due_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'priority': task.get_priority_display(),
+            }
+            return JsonResponse(response_data)
+        else:
+            # If the form is not valid, return the errors as JSON
+            errors = form.errors.as_json()
+            return JsonResponse({'errors': errors}, status=400)
     else:
         form = TaskForm()
     return render(request, 'todo/task_create_modal.html', {'form': form})
-
 def task_edit(request, pk):
     task = get_object_or_404(Task, pk=pk)
     if request.method == 'POST':

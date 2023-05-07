@@ -12,7 +12,7 @@
         <div class="modal-body">
   
      
-          <form method="post" action="{% url 'todo:task_create_modal' %}">
+          <form id="create-task-form" method="post" action="{% url 'todo:task_create_modal' %}">
             {% csrf_token %}
             <div class="form-group">
               <label for="title">Title:</label>
