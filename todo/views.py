@@ -79,18 +79,21 @@ def task_delete(request, pk):
         return redirect('todo:task_list')
     return render(request, 'todo/task_confirm_delete.html', {'task': task})
 
-def completed_tasks(request):
-    completed_tasks = Task.objects.filter(completed=True).order_by('due_date', 'priority')
-    return render(request, 'todo/completed_tasks.html', {'completed_tasks': completed_tasks})
-
 # def completed_tasks(request):
-#     if request.method == 'POST':
-#         task_id = request.POST.get('task_id')
-#         task = Task.objects.get(id=task_id)
-#         task.completed = True
-#         task.save()
-#         return redirect('todo:task_list')
-#     return render(request, 'todo/completed_tasks.html', {'tasks': completed_tasks})
+#     completed_tasks = Task.objects.filter(completed=True).order_by('due_date', 'priority')
+#     return render(request, 'todo/completed_tasks.html', {'completed_tasks': completed_tasks})
+
+def completed_tasks(request):
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        task = Task.objects.get(id=task_id)
+        task.completed = True
+        task.save()
+        completed_tasks = Task.objects.filter(completed=True).order_by('due_date', 'priority')
+        return render(request, 'todo/completed_tasks.html', {'completed_tasks': completed_tasks})
+    elif request.method =='GET':
+        completed_tasks = Task.objects.filter(completed=True).order_by('due_date', 'priority')
+        return render(request, 'todo/completed_tasks.html', {'completed_tasks': completed_tasks})
 
 # def index(request):
 #     tasks = Task.objects.filter(completed=False).order_by('due_date', '-priority')

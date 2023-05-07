@@ -1,7 +1,7 @@
 {% extends "todo/base.html" %}
 {% load static %}
 {% block content %}
-  <h1 style="text-align:center;">Task List</h1>
+  <h1 style="text-align:center;">Pending Todos</h1>
   
 
   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTaskModal">
@@ -26,8 +26,8 @@
               <input type="hidden" name="task_id" value="{{ task.id }}">
               <button type="submit" style="padding:5px 10px; font-size:0.9rem; background-color:#28a745; color:#fff; border-radius:5px; border:none;" {% if task.completed %}disabled{% endif %}>Mark as Complete</button>
             </form>
-            <a href="{% url 'todo:edit_task' task.id %}" style="padding:5px 10px; font-size:0.9rem; background-color:#6c757d; color:#fff; border-radius:5px; text-decoration:none; margin-right:10px;">Edit</a>
-            <a href="{% url 'todo:delete_task' task.id %}" style="padding:5px 10px; font-size:0.9rem; background-color:#dc3545; color:#fff; border-radius:5px; text-decoration:none;">Delete</a>
+            <a href="{% url 'todo:task_edit' task.id %}" style="padding:5px 10px; font-size:0.9rem; background-color:#6c757d; color:#fff; border-radius:5px; text-decoration:none; margin-right:10px;">Edit</a>
+            <a href="{% url 'todo:task_delete' task.id %}" style="padding:5px 10px; font-size:0.9rem; background-color:#dc3545; color:#fff; border-radius:5px; text-decoration:none;">Delete</a>
           </div>
         </div>
       </div>
