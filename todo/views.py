@@ -6,6 +6,7 @@ from django.http import HttpResponseBadRequest,HttpResponse
 from .models import Task
 from .forms import TaskForm
 
+from django.views.decorators.csrf import csrf_exempt
 # def task_list(request):
 #     tasks = Task.objects.all().order_by('due_date', 'priority')
 #     return render(request, 'todo/task_list.html', {'tasks': tasks})
@@ -28,7 +29,7 @@ def task_create(request):
     return render(request, 'todo/task_form.html', {'form': form})
 
 
-from django.http import JsonResponse
+
 
 # def task_create_modal(request):
 #     if request.method == 'POST':
@@ -74,14 +75,16 @@ def task_edit(request, pk):
 
 def task_delete(request, pk):
     task = get_object_or_404(Task, pk=pk)
-    if request.method == 'POST':
+    if request.method == 'DELETE':
         task.delete()
-        return redirect('todo:task_list')
-    return render(request, 'todo/task_confirm_delete.html', {'task': task})
+        data = {"success":True}
+        return JsonResponse(data)
+    else:
+        print("request.methos",request.method)
+        data = {"success":False}
+        return JsonResponse(data)
 
-# def completed_tasks(request):
-#     completed_tasks = Task.objects.filter(completed=True).order_by('due_date', 'priority')
-#     return render(request, 'todo/completed_tasks.html', {'completed_tasks': completed_tasks})
+
 
 def completed_tasks(request):
     if request.method == 'POST':
@@ -95,7 +98,3 @@ def completed_tasks(request):
         completed_tasks = Task.objects.filter(completed=True).order_by('due_date', 'priority')
         return render(request, 'todo/completed_tasks.html', {'completed_tasks': completed_tasks})
 
-# def index(request):
-#     tasks = Task.objects.filter(completed=False).order_by('due_date', '-priority')
-#     completed_tasks = Task.objects.filter(completed=True).order_by('-due_date', 'priority')
-#     return render(request, 'todo/index.html', {'tasks': tasks, 'completed_tasks': completed_tasks})

@@ -1,0 +1,25 @@
+{% block content %}
+
+<!-- Button trigger modal -->
+  <!-- Modal -->
+  <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="TaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1>{% if task.id %}Edit{% else %}Create{% endif %} Task</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <h1>Delete Task</h1>
+            <p>Are you sure you want to delete the task "{{ task.title }}"?</p>
+            <form method="post" id="delete-form">
+              {% csrf_token %}
+
+              <a href="{% url 'todo:task_delete' task.id %}" class="delete-btn btn btn-danger" style="padding:5px 10px; font-size:0.9rem; background-color:#dc3545; color:#fff; border-radius:5px; text-decoration:none;">Delete</a>
+              <a href="{% url 'todo:task_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
