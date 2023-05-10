@@ -43,3 +43,13 @@ a.button {
 .low-priority {
   border-color: green;
 }
+
+
+.tasks-card {
+  height: 190px; /* Set the height to 300 pixels */
+}
+.card-body-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

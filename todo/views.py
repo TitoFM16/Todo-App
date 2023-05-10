@@ -95,6 +95,9 @@ def task_delete(request, pk):
         task.delete()
         data = {"success":True}
         return JsonResponse(data)
+    elif request.method == 'GET':
+        task.delete()
+        return redirect('todo:completed_tasks')
     else:
         print("request.methos",request.method)
         data = {"success":False}

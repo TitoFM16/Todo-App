@@ -15,9 +15,10 @@
   <div class="row row-tasks" id="row-tasks">
     {% for task in tasks %}
       <div class="col-sm-6 col-md-4 col-lg-3 my-2 " data-task-id="{{ task.id }}">
-        <div class="card {% if task.priority == 'H' %}high-priority{% elif task.priority == 'M' %}medium-priority{% else %}low-priority{% endif %}" >
+        <div class="card tasks-card {% if task.priority == 'H' %}high-priority{% elif task.priority == 'M' %}medium-priority{% else %}low-priority{% endif %}" >
         <div class="card-header">{{ task.title }}</div>
-          <div class="card-body" style="padding:10px;">
+        
+          <div class="card-body card-body-overflow" style="padding:10px;">
             <p class="card-text">{{ task.description }}</p>
             <p class="card-text" style="margin-bottom:0;"><strong>Due date:</strong> {{ task.due_date }}</p>
             <p class="card-text" style="margin-bottom:0;"><strong>Priority:</strong> {{ task.get_priority_display }}</p>
