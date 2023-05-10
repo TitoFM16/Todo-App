@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.http import HttpResponseBadRequest,HttpResponse
 from .models import Task
 from .forms import TaskForm
-
+from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
 # def task_list(request):
 #     tasks = Task.objects.all().order_by('due_date', 'priority')
@@ -13,6 +13,11 @@ from django.views.decorators.csrf import csrf_exempt
 def task_list(request):
     tasks = Task.objects.filter(completed=False).order_by('due_date', 'priority')
     return render(request, 'todo/task_list.html', {'tasks': tasks})
+
+def get_ordered_tasks(request):
+    tasks = Task.objects.filter(completed=False).order_by('due_date', ('priority'))
+    serialized_tasks = serialize('json', tasks)
+    return JsonResponse(serialized_tasks, safe=False)
 
 def task_detail(request, pk):
     task = get_object_or_404(Task, pk=pk)

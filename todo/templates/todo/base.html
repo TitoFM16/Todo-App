@@ -49,119 +49,87 @@
             var form = $(this); // get the form element
             $.ajax({
             type: "POST",
-            url: form.attr("action"),
+            url: '/task_create_modal/',
             data: form.serialize(), // serialize form data
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}'); // include the CSRF token in the request headers
+            },
             success: function(response) {
 
 
-                var taskElement = $("<div>")
-                .addClass("col-sm-6 col-md-4 col-lg-3")
-                .append($("<div>")
-                    .addClass("card " + (response.priority == "H" ? "high-priority" : response.priority == "M" ? "medium-priority" : "low-priority"))
-                    .append($("<div>")
-                        .addClass("card-header")
-                        .text(response.title))
-                    .append($("<div>")
-                        .addClass("card-body")
-                        .css("padding", "10px")
-                        .append($("<p>")
-                            .addClass("card-text")
-                            .text(response.description))
-                        .append($("<p>")
-                            .addClass("card-text")
-                            .css("margin-bottom", "0")
-                            .append($("<strong>")
-                                .text("Due date: "))
-                            .append($("<span>")
-                                .text(response.due_date)))
-                        .append($("<p>")
-                            .addClass("card-text")
-                            .css("margin-bottom", "0")
-                            .append($("<strong>")
-                                .text("Priority: "))
-                            .append($("<span>")
-                                .text(response.priority))))
-                    .append($("<form>")
-                        .attr("method", "post")
-                        .attr("action", "{% url 'todo:completed_tasks' %}")
-                        .css("display", "inline-block")
-                        .css("margin-right", "10px")
-                     
-                        .append($("<input>")
-                            .attr("type", "hidden")
-                            .attr("name", "task_id")
-                            .attr("value", response.id))
-                        .append($("<button>")
-                            .attr("type", "submit")
-                            .css("padding", "5px 10px")
-                            .css("font-size", "0.9rem")
-                            .css("background-color", "#28a745")
-                            .css("color", "#fff")
-                            .css("border-radius", "5px")
-                            .css("border", "none")
-                            .prop("disabled", response.completed)
-                            .text("Mark as Complete")))
-                    .append($("<a>")
-                        .css("padding", "5px 10px")
-                        .css("font-size", "0.9rem")
-                        .css("background-color", "#6c757d")
-                        .css("color", "#fff")
-                        .css("border-radius", "5px")
-                        .css("text-decoration", "none")
-                        .css("margin-right", "10px")
-                        .text("Edit"))
-                    .append($("<a>")
-        
-                        .css("padding", "5px 10px")
-                        .css("font-size", "0.9rem")
-                        .css("background-color", "#dc3545")
-                        .css("color", "#fff")
-                        .css("border-radius", "5px")
-                        .css("text-decoration", "none")
-                        .text("Delete")));
-                    // AZ
+            const newTaskDiv = document.createElement('div');
+            newTaskDiv.innerHTML = `
+                <div class="col-sm-6 col-md-4 col-lg-3 my-2" data-task-id="${response.id}">
+                    <div class="card {% if task.priority == 'H' %}high-priority{% elif task.priority == 'M' %}medium-priority{% else %}low-priority{% endif %}" >
+                        <div class="card-header">${response.title }</div>
+                        <div class="card-body" style="padding:10px;">
+                            <p class="card-text">${response.description }</p>
+                            <p class="card-text" style="margin-bottom:0;"><strong>Due date:</strong> ${response.due_date }</p>
+                            <p class="card-text" style="margin-bottom:0;"><strong>Priority:</strong> ${response.priority }</p>
+                            <form method="post" action="/completed" style="display:inline-block; margin-right:10px;">
+                           
+                                <input type="hidden" name="task_id" value="${response.id }">
+                                <button type="submit" style="padding:5px 10px; font-size:0.9rem; background-color:#28a745; color:#fff; border-radius:5px; border:none;" {% if task.completed %}disabled{% endif %}>Mark as Complete</button>
+                            </form>
+                            <a href="/edit/${response.id}" style="padding:5px 10px; font-size:0.9rem; background-color:#6c757d; color:#fff; border-radius:5px; text-decoration:none; margin-right:10px;">Edit</a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" data-task-id="${response.id}" style="padding:5px 10px; font-size:0.9rem; background-color:#dc3545; color:#fff; border-radius:5px; text-decoration:none;">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-                // Append the new task to the task list
-                $(".row").prepend(taskElement);
-
-
-                // Hide the modal
-                $("#createTaskModal").modal("hide");
-                $(".modal-backdrop").remove();
-
-                // Reset the form
-                form[0].reset();
-                // hide the modal
-                $("#createTaskModal").modal("hide");
-                $('.modal-backdrop').remove();
+            document.getElementById('new-task').appendChild(newTaskDiv);
+            // Hide the modal
+            $('#createTaskModal').modal('hide');
+            
+            // Hide the modal
+            $("#createTaskModal").modal("hide");
+            $(".modal-backdrop").remove();
             }
             });
         });
         });
 
     </script>
-    <script>
-    $(document).on('click', '.mark-complete-btn', function() {
-        var task_id = $(this).data('task-id');
-        $.ajax({
-            url: '/mark_complete/',
-            type: 'POST',
-            data: {'task_id': task_id},
-            dataType: 'json',
-            success: function(data) {
-                if (data.success) {
-                    alert('Task marked as complete!');
-                    // Reload the page to update the task list
-                    location.reload();
-                } else {
-                    alert('An error occurred.');
-                }
-            },
-            error: function() {
-                alert('An error occurred.');
-            }
-        });
+    <!-- <script>
+        $(document).ready(function() {
+        $("#create-task-form").submit(function(event) {
+            console.log("submited")
+            event.preventDefault(); // prevent default form submit behavior
+    // Make an AJAX request to get the tasks
+    $.ajax({
+      url: '/get_ordered_tasks/',
+      success: function(data) {
+        // Clear the current task list
+        $('#task-list').empty();
+
+        // Parse the JSON data
+        var tasks = JSON.parse(data);
+
+        // Iterate through the tasks and append them to the task list
+        for (var i = 0; i < tasks.length; i++) {
+          var task = tasks[i].fields;
+          var taskHtml = `
+            <div class="card mb-3">
+              <div class="card-body">
+                <h5 class="card-title">${task.title}</h5>
+                <p class="card-text">${task.description}</p>
+                <p class="card-text"><strong>Due Date:</strong> ${task.due_date}</p>
+                <p class="card-text"><strong>Priority:</strong> ${task.priority}</p>
+                <a href="/edit/${task.id}" class="btn btn-primary">Edit</a>
+              </div>
+            </div>
+          `;
+          
+          $('#row-tasks').append(taskHtml);
+        }
+      }
     });
+  }
+)});
+
+    </script> -->
     </script>
+
   </body>
 </html>
